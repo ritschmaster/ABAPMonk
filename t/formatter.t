@@ -9,6 +9,7 @@ plan tests => 3;
 use SAF::Formatter;
 use SAF::Statements::Data;
 use SAF::Statements::FieldSymbol;
+use SAF::Statements::Form;
 
 my $formatter = SAF::Formatter->new;
 my @statements = ( );
