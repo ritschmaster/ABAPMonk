@@ -29,9 +29,11 @@ ok eq_array(\@result, \@result_exp), "Parsing no source code failed";
 ################################################################################
 # Test DATA
 $text = "DATA: lf_i TYPE int4. DATA: lf_test011 TYPE string.";
+$text .= "DATA: lt_duplicates TYPE TABLE OF matnr.";
 
 @result_exp = ( SAF::Statements::Data->new("lf_i", "TYPE", "int4"),
-                SAF::Statements::Data->new("lf_test011", "TYPE", "string") );
+                SAF::Statements::Data->new("lf_test011", "TYPE", "string"),
+                SAF::Statements::Data->new("lt_duplicates", "TYPE TABLE OF", "matnr"));
 @result = $parser->parse($text);
 
 ok eq_array(\@result, \@result_exp), "Parsing DATA failed";
@@ -111,6 +113,5 @@ ENDFORM.';
                                                \@statements) );
 }
 @result = $parser->parse($text);
-diag Dumper \@result;
 
 ok eq_array(\@result, \@result_exp), "Parsing FORM with USING and CHANGING failed";
