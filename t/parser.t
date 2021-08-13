@@ -44,7 +44,7 @@ ok eq_array(\@result, \@result_exp), "Parsing DATA failed";
 
 ################################################################################
 # Test FIELD-SYMBOL
-$text = "FIELD-SYMBOL: <lf_i> TYPE int4. FIELD-SYMBOL: <lf_test011> TYPE string.";
+$text = "FIELD-SYMBOLS: <lf_i> TYPE int4. FIELD-SYMBOLS: <lf_test011> TYPE string.";
 
 @result_exp = ( SAF::Statements::FieldSymbol->new("<lf_i>", "TYPE", "int4"),
                 SAF::Statements::FieldSymbol->new("<lf_test011>", "TYPE", "string") );
@@ -55,8 +55,10 @@ ok eq_array(\@result, \@result_exp), "Parsing FIELD-SYMBOL failed";
 ################################################################################
 # Test DATA + FIELD-SYMBOL
 $text = "DATA: lf_i TYPE int4. DATA: lf_test011 TYPE string.";
-$text .= "FIELD-SYMBOL: <lf_i> TYPE int4. FIELD-SYMBOL: <lf_test011> TYPE string.";
+$text .= "FIELD-SYMBOLS: <lf_i> TYPE int4. FIELD-SYMBOLS: <lf_test011> TYPE string.";
 $text .= "DATA: lf_very_long_field TYPE string.";
+$text .= "DATA: lt_matnr TYPE TABLE OF matnr.";
+$text .= "FIELD-SYMBOLS: <lf_matnr> LIKE LINE OF lt_matnr.";
 
 @result_exp = ( SAF::Statements::Data->new("lf_i", "TYPE", "int4"),
                 SAF::Statements::Data->new("lf_test011", "TYPE", "string"),
@@ -64,7 +66,10 @@ $text .= "DATA: lf_very_long_field TYPE string.";
                 SAF::Statements::FieldSymbol->new("<lf_i>", "TYPE", "int4"),
                 SAF::Statements::FieldSymbol->new("<lf_test011>", "TYPE", "string"),
 
-                SAF::Statements::Data->new("lf_very_long_field", "TYPE", "string") );
+                SAF::Statements::Data->new("lf_very_long_field", "TYPE", "string"),
+                SAF::Statements::Data->new("lt_matnr", "TYPE TABLE OF", "matnr"),
+
+                SAF::Statements::FieldSymbol->new("<lf_matnr>", "LIKE LINE OF", "lt_matnr") );
 @result = $parser->parse($text);
 
 ok eq_array(\@result, \@result_exp), "Parsing DATA + FIELD-SYMBOL failed";

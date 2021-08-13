@@ -22,11 +22,11 @@ sub new {
 
         <rule: DataDeclaration>   <Data> | <FieldSymbol>
 
-        <rule: Statement>         <DataDeclaration>
+        <rule: Statement>         <DataDeclaration> | <If>
 
         <rule: Data>              DATA: <Field> <TypeDecl> <Type> <StatementEnd>
 
-        <rule: FieldSymbol>       FIELD-SYMBOL: <FieldSymbolField> <TypeDecl> <Type> <StatementEnd>
+        <rule: FieldSymbol>       FIELD-SYMBOLS: <FieldSymbolField> <TypeDecl> <Type> <StatementEnd>
 
         <rule: Field>             [a-zA-Z0-9_-]+
 
@@ -58,6 +58,15 @@ sub new {
         <rule: Changing>         CHANGING <[Argument]>+
 
         <rule: Argument>         <Field> <TypeDecl> <Type>
+
+        <rule: If>               IF <[Condition]> <StatementEnd>
+                                   <[Statement]>*
+                                 <[ElseIf]>*
+                                 ENDIF <StatementEnd>
+
+        <rule: Condition>        <Field> = <Field>
+
+        <rule: ElseIf>           ELSEIF <[Condition]>+ <StatementEnd>
         };
 
 
