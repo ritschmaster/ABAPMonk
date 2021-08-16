@@ -34,7 +34,7 @@ sub new {
 
         <rule: TypeDecl>          TYPE | TYPE LINE OF | TYPE TABLE OF | LIKE | LIKE LINE OF | TYPE REF TO
 
-        <rule: Type>              [/a-zA-Z0-9_-]+
+        <rule: Type>              ([/a-zA-Z0-9_-]|=>)+
 
         <rule: StatementEnd>      \.
 
