@@ -24,7 +24,7 @@ sub new {
 sub _prefix {
     my ($self) = @_;
 
-    return "FIELD-SYMBOL: " . $self->{ _field };
+    return "FIELD-SYMBOLS: " . $self->{ _field };
 }
 
 # Get the length to the type declaration
@@ -39,7 +39,7 @@ sub len_to_type_decl {
 sub _simple_format {
     my ($self) = @_;
 
-    my $formatted = "FIELD-SYMBOL: " . $self->{ _field }
+    my $formatted = "FIELD-SYMBOLS: " . $self->{ _field }
                     . " "
                     . $self->{ _type_decl } . " " . $self->{ _type } . $self->STATEMENT_END_STR;
 

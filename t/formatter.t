@@ -35,9 +35,9 @@ is $result, $result_exp, "Formatting DATA failed";
                 SAF::Statements::FieldSymbol->new("<lf_test011>", "TYPE", "string"),
                 SAF::Statements::FieldSymbol->new("<lf_very_long_field>", "TYPE", "string") );
 $result_exp = '';
-$result_exp .= "FIELD-SYMBOL: <lf_i>               TYPE int4." . "\n";
-$result_exp .= "FIELD-SYMBOL: <lf_test011>         TYPE string." . "\n";
-$result_exp .= "FIELD-SYMBOL: <lf_very_long_field> TYPE string.";
+$result_exp .= "FIELD-SYMBOLS: <lf_i>               TYPE int4." . "\n";
+$result_exp .= "FIELD-SYMBOLS: <lf_test011>         TYPE string." . "\n";
+$result_exp .= "FIELD-SYMBOLS: <lf_very_long_field> TYPE string.";
 
 $result = $formatter->format(@statements);
 is $result, $result_exp, "Formatting FIELD-SYMBOL failed";
@@ -52,13 +52,13 @@ is $result, $result_exp, "Formatting FIELD-SYMBOL failed";
 
                 SAF::Statements::Data->new("lf_very_long_field", "TYPE", "string") );
 $result_exp = '';
-$result_exp .= "DATA: lf_i                 TYPE int4." . "\n";
-$result_exp .= "DATA: lf_test011           TYPE string." . "\n";
+$result_exp .= "DATA: lf_i                  TYPE int4." . "\n";
+$result_exp .= "DATA: lf_test011            TYPE string." . "\n";
 $result_exp .= "\n";
-$result_exp .= "FIELD-SYMBOL: <lf_i>       TYPE int4." . "\n";
-$result_exp .= "FIELD-SYMBOL: <lf_test011> TYPE string." . "\n";
+$result_exp .= "FIELD-SYMBOLS: <lf_i>       TYPE int4." . "\n";
+$result_exp .= "FIELD-SYMBOLS: <lf_test011> TYPE string." . "\n";
 $result_exp .= "\n";
-$result_exp .= "DATA: lf_very_long_field   TYPE string.";
+$result_exp .= "DATA: lf_very_long_field    TYPE string.";
 
 $result = $formatter->format(@statements);
 is $result, $result_exp, "Formatting DATA + FIELD-SYMBOL failed";
