@@ -7,6 +7,8 @@ use Regexp::Grammars;
 
 use SAF::Statements::Data;
 use SAF::Statements::FieldSymbol;
+use SAF::Statements::Constant;
+use SAF::Statements::CommentBlock;
 use SAF::Statements::Form;
 use SAF::Statements::Argument;
 
@@ -18,15 +20,28 @@ sub new {
 
         <rule: SourceCode>        <[GlobalDeclaration]>*
 
-        <rule: GlobalDeclaration> <[DataDeclaration]>+ | <[Form]>+
+        <rule: GlobalDeclaration> <[DataDeclaration]>+
+                                  | <[CommentBlock]>+
+                                  | <[Form]>+
 
-        <rule: DataDeclaration>   <Data> | <FieldSymbol>
+        <rule: DataDeclaration>   <Data>
+                                  | <FieldSymbol>
+                                  | <Constant>
 
-        <rule: Statement>         <DataDeclaration> | <If>
+        <rule: Statement>         <DataDeclaration>
+                                  | <If>
+
+        <rule: CommentBlock>      <[CommentLine]>+
+
+        <rule: CommentLine>       \*.*
+
+        <rule: Comment>           ".*
 
         <rule: Data>              DATA: <Field> <TypeDecl> <Type> <StatementEnd>
 
         <rule: FieldSymbol>       FIELD-SYMBOLS: <FieldSymbolField> <TypeDecl> <Type> <StatementEnd>
+
+        <rule: Constant>          CONSTANTS: <Field> <TypeDecl> <Type> VALUE <Value> <StatementEnd>
 
         <rule: Field>             [a-zA-Z0-9_-]+
 
@@ -35,6 +50,8 @@ sub new {
         <rule: TypeDecl>          TYPE | TYPE LINE OF | TYPE TABLE OF | LIKE | LIKE LINE OF | TYPE REF TO
 
         <rule: Type>              ([/a-zA-Z0-9_-]|=>)+
+
+        <rule: Value>             '.*' | [0-9]+[-]{0,1}
 
         <rule: StatementEnd>      \.
 
@@ -83,6 +100,7 @@ sub _parse_data_declaration {
         my $parsed_statement = 0;
         my $data = ${ $data_declaration }{ Data };
         my $field_symbol = ${ $data_declaration }{ FieldSymbol };
+        my $constant = ${ $data_declaration }{ Constant };
         if ($data) {
                 $parsed_statement = SAF::Statements::Data->new(${ $data }{ Field },
                                                                ${ $data }{ TypeDecl },
@@ -91,6 +109,11 @@ sub _parse_data_declaration {
                 $parsed_statement = SAF::Statements::FieldSymbol->new(${ $field_symbol }{ FieldSymbolField },
                                                                       ${ $field_symbol }{ TypeDecl },
                                                                       ${ $field_symbol }{ Type });
+        } elsif ($constant) {
+                $parsed_statement = SAF::Statements::Constant->new(${ $constant }{ Field },
+                                                                   ${ $constant }{ TypeDecl },
+                                                                   ${ $constant }{ Type },
+                                                                   ${ $constant }{ Value });
         } else {
                 # TODO
         }
@@ -107,6 +130,23 @@ sub _parse_data_declarations {
         }
 
         return @parsed_statements;
+}
+
+sub _parse_comment_block {
+    my ($self, $comment_block_ref) = @_;
+
+    my @text_lines = ( );
+    foreach my $comment_block_line ( @{ $comment_block_ref } ) {
+            my @comment_lines = @{ ${ $comment_block_line }{ CommentLine } };
+            #@comment_lines = $comment_lines[0];
+            foreach my $comment_line ( @comment_lines ) {
+                    my $text_line = $comment_line;
+                    $text_line =~ s/^[\n]*\*\s+//; # Remove leading * with leading space
+                    push @text_lines, $text_line;
+            }
+    }
+
+    return SAF::Statements::CommentBlock->new(\@text_lines);
 }
 
 sub _parse_argument {
@@ -196,11 +236,15 @@ sub _parse {
 
         foreach my $global_declaration ( @global_declarations ) {
                 my $data_declarations_ref = ${ $global_declaration }{ DataDeclaration };
+                my $comment_block_ref = ${ $global_declaration }{ CommentBlock };
                 my $forms_ref  = ${ $global_declaration }{ Form };
 
                 if (defined $data_declarations_ref) {
                         my @data_declarations = @{ $data_declarations_ref };
                         push @parsed_statements, $self->_parse_data_declarations(\@data_declarations);
+                } elsif (defined $comment_block_ref) {
+                        my @comment_block = @{ $comment_block_ref };
+                        push @parsed_statements, $self->_parse_comment_block(\@comment_block);
                 } elsif (defined $forms_ref) {
                         my @forms = @{ $forms_ref };
                         push @parsed_statements, $self->_parse_forms(\@forms);

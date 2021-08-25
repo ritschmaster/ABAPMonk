@@ -4,11 +4,13 @@ use warnings;
 use Test::More;
 use Data::Dumper;
 
-plan tests => 6;
+plan tests => 7;
 
 use SAF::Parser;
 use SAF::Statements::Data;
 use SAF::Statements::FieldSymbol;
+use SAF::Statements::Constant;
+use SAF::Statements::CommentBlock;
 use SAF::Statements::Form;
 use SAF::Statements::Argument;
 
@@ -28,13 +30,19 @@ ok eq_array(\@result, \@result_exp), "Parsing no source code failed";
 
 ################################################################################
 # Test DATA
-$text = "DATA: lf_i TYPE int4. DATA: lf_test011 TYPE string.";
-$text .= "DATA: lt_duplicates TYPE TABLE OF matnr.";
-$text .= "DATA: lt_matnr TYPE /test/tt_matnr.";
-$text .= "DATA: lcl_data TYPE REF TO data.";
+$text = "* This is a test" . "\n";
+$text .= "* testing some data declarations" . "\n";
+$text .= "DATA: lf_i TYPE int4. DATA: lf_test011 TYPE string." . "\n";
+$text .= "* Fields to eliminate duplicates:" . "\n";
+$text .= "DATA: lt_duplicates TYPE TABLE OF matnr." . "\n";
+$text .= "DATA: lt_matnr TYPE /test/tt_matnr." . "\n";
+$text .= "DATA: lcl_data TYPE REF TO data." . "\n";
 
-@result_exp = ( SAF::Statements::Data->new("lf_i", "TYPE", "int4"),
+@result_exp = ( SAF::Statements::CommentBlock->new(["This is a test",
+                                                    "testing some data declarations"]),
+                SAF::Statements::Data->new("lf_i", "TYPE", "int4"),
                 SAF::Statements::Data->new("lf_test011", "TYPE", "string"),
+                SAF::Statements::CommentBlock->new(["Fields to eliminate duplicates:"]),
                 SAF::Statements::Data->new("lt_duplicates", "TYPE TABLE OF", "matnr"),
                 SAF::Statements::Data->new("lt_matnr", "TYPE", "/test/tt_matnr" ),
                 SAF::Statements::Data->new("lcl_data", "TYPE REF TO", "data" ) );
@@ -44,7 +52,7 @@ ok eq_array(\@result, \@result_exp), "Parsing DATA failed";
 
 ################################################################################
 # Test FIELD-SYMBOL
-$text = "FIELD-SYMBOLS: <lf_i> TYPE int4. FIELD-SYMBOLS: <lf_test011> TYPE string.";
+$text = "FIELD-SYMBOLS: <lf_i> TYPE int4. FIELD-SYMBOLS: <lf_test011> TYPE string." . "\n";
 
 @result_exp = ( SAF::Statements::FieldSymbol->new("<lf_i>", "TYPE", "int4"),
                 SAF::Statements::FieldSymbol->new("<lf_test011>", "TYPE", "string") );
@@ -53,12 +61,26 @@ $text = "FIELD-SYMBOLS: <lf_i> TYPE int4. FIELD-SYMBOLS: <lf_test011> TYPE strin
 ok eq_array(\@result, \@result_exp), "Parsing FIELD-SYMBOL failed";
 
 ################################################################################
+# Test CONSTANT
+$text = "CONSTANTS: c_i TYPE int4 VALUE 9999-. CONSTANTS: c_str TYPE string VALUE 'Hello world!'." . "\n";
+$text .= "CONSTANTS: c_duplicate TYPE matnr VALUE 'DUPLICATE'." . "\n";
+
+@result_exp = ( SAF::Statements::Constant->new("c_i", "TYPE", "int4", "9999-"),
+                SAF::Statements::Constant->new("c_str", "TYPE", "string", "'Hello world!'"),
+                SAF::Statements::Constant->new("c_duplicate", "TYPE", "matnr", "'DUPLICATE'") );
+@result = $parser->parse($text);
+
+ok eq_array(\@result, \@result_exp), "Parsing CONSTANT failed";
+
+
+
+################################################################################
 # Test DATA + FIELD-SYMBOL
-$text = "DATA: lf_i TYPE int4. DATA: lf_test011 TYPE string.";
-$text .= "FIELD-SYMBOLS: <lf_i> TYPE int4. FIELD-SYMBOLS: <lf_test011> TYPE string.";
-$text .= "DATA: lf_very_long_field TYPE string.";
-$text .= "DATA: lt_matnr TYPE TABLE OF matnr.";
-$text .= "FIELD-SYMBOLS: <lf_matnr> LIKE LINE OF lt_matnr.";
+$text = "DATA: lf_i TYPE int4. DATA: lf_test011 TYPE string." . "\n";
+$text .= "FIELD-SYMBOLS: <lf_i> TYPE int4. FIELD-SYMBOLS: <lf_test011> TYPE string." . "\n";
+$text .= "DATA: lf_very_long_field TYPE string." . "\n";
+$text .= "DATA: lt_matnr TYPE TABLE OF matnr." . "\n";
+$text .= "FIELD-SYMBOLS: <lf_matnr> LIKE LINE OF lt_matnr." . "\n";
 
 @result_exp = ( SAF::Statements::Data->new("lf_i", "TYPE", "int4"),
                 SAF::Statements::Data->new("lf_test011", "TYPE", "string"),

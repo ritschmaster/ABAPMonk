@@ -22,8 +22,8 @@ sub _format_data {
     my $len_to_type_decl = 0;
     my $statement = $statements[$i];
     my @data_statements = ($statement);
-    for ($j = $i; (ref($statement) eq "SAF::Statements::Data"
-                   || ref($statement) eq "SAF::Statements::FieldSymbol")
+    for ($j = $i; (ref($statements[$j]) eq "SAF::Statements::Data"
+                   || ref($statements[$j]) eq "SAF::Statements::FieldSymbol")
                    && $j < scalar @statements; $j++) {
         $statement = $statements[$j];
         my $new_len_to_type_decl = $statement->len_to_type_decl;
@@ -54,12 +54,15 @@ sub format {
         my $statement = $statements[$i];
 
         if (ref($statement) eq "SAF::Statements::Data"
-            || ref($statement) eq "SAF::Statements::FieldSymbol") {
+            || ref($statement) eq "SAF::Statements::FieldSymbol"
+            || ref($statement) eq "SAF::Statements::Constant") {
             # Search for the next few statements
             my $formatted_data = "";
 
             ($formatted_data, $i) = $self->_format_data(\@statements, $i);
             $formatted .= $formatted_data;
+        } elsif (ref($statement) eq "SAF::Statements::CommentBlock") {
+            $formatted .= $statement->format();
         }
 
         $formatted .= "\n" if $i + 1 < $statements_len;
