@@ -6,15 +6,15 @@ use Data::Dumper;
 
 plan tests => 7;
 
-use SAF::Parser;
-use SAF::Statements::Data;
-use SAF::Statements::FieldSymbol;
-use SAF::Statements::Constant;
-use SAF::Statements::CommentBlock;
-use SAF::Statements::Form;
-use SAF::Statements::Argument;
+use ABAPMonk::Parser;
+use ABAPMonk::Statements::Data;
+use ABAPMonk::Statements::FieldSymbol;
+use ABAPMonk::Statements::Constant;
+use ABAPMonk::Statements::CommentBlock;
+use ABAPMonk::Statements::Form;
+use ABAPMonk::Statements::Argument;
 
-my $parser = SAF::Parser->new;
+my $parser = ABAPMonk::Parser->new;
 my $text = "";
 my @result = ( 0 );
 my @result_exp = ( 1 );
@@ -38,14 +38,14 @@ $text .= "DATA: lt_duplicates TYPE TABLE OF matnr." . "\n";
 $text .= "DATA: lt_matnr TYPE /test/tt_matnr." . "\n";
 $text .= "DATA: lcl_data TYPE REF TO data." . "\n";
 
-@result_exp = ( SAF::Statements::CommentBlock->new(["This is a test",
+@result_exp = ( ABAPMonk::Statements::CommentBlock->new(["This is a test",
                                                     "testing some data declarations"]),
-                SAF::Statements::Data->new("lf_i", "TYPE", "int4"),
-                SAF::Statements::Data->new("lf_test011", "TYPE", "string"),
-                SAF::Statements::CommentBlock->new(["Fields to eliminate duplicates:"]),
-                SAF::Statements::Data->new("lt_duplicates", "TYPE TABLE OF", "matnr"),
-                SAF::Statements::Data->new("lt_matnr", "TYPE", "/test/tt_matnr" ),
-                SAF::Statements::Data->new("lcl_data", "TYPE REF TO", "data" ) );
+                ABAPMonk::Statements::Data->new("lf_i", "TYPE", "int4"),
+                ABAPMonk::Statements::Data->new("lf_test011", "TYPE", "string"),
+                ABAPMonk::Statements::CommentBlock->new(["Fields to eliminate duplicates:"]),
+                ABAPMonk::Statements::Data->new("lt_duplicates", "TYPE TABLE OF", "matnr"),
+                ABAPMonk::Statements::Data->new("lt_matnr", "TYPE", "/test/tt_matnr" ),
+                ABAPMonk::Statements::Data->new("lcl_data", "TYPE REF TO", "data" ) );
 @result = $parser->parse($text);
 
 ok eq_array(\@result, \@result_exp), "Parsing DATA failed";
@@ -54,8 +54,8 @@ ok eq_array(\@result, \@result_exp), "Parsing DATA failed";
 # Test FIELD-SYMBOL
 $text = "FIELD-SYMBOLS: <lf_i> TYPE int4. FIELD-SYMBOLS: <lf_test011> TYPE string." . "\n";
 
-@result_exp = ( SAF::Statements::FieldSymbol->new("<lf_i>", "TYPE", "int4"),
-                SAF::Statements::FieldSymbol->new("<lf_test011>", "TYPE", "string") );
+@result_exp = ( ABAPMonk::Statements::FieldSymbol->new("<lf_i>", "TYPE", "int4"),
+                ABAPMonk::Statements::FieldSymbol->new("<lf_test011>", "TYPE", "string") );
 @result = $parser->parse($text);
 
 ok eq_array(\@result, \@result_exp), "Parsing FIELD-SYMBOL failed";
@@ -65,9 +65,9 @@ ok eq_array(\@result, \@result_exp), "Parsing FIELD-SYMBOL failed";
 $text = "CONSTANTS: c_i TYPE int4 VALUE 9999-. CONSTANTS: c_str TYPE string VALUE 'Hello world!'." . "\n";
 $text .= "CONSTANTS: c_duplicate TYPE matnr VALUE 'DUPLICATE'." . "\n";
 
-@result_exp = ( SAF::Statements::Constant->new("c_i", "TYPE", "int4", "9999-"),
-                SAF::Statements::Constant->new("c_str", "TYPE", "string", "'Hello world!'"),
-                SAF::Statements::Constant->new("c_duplicate", "TYPE", "matnr", "'DUPLICATE'") );
+@result_exp = ( ABAPMonk::Statements::Constant->new("c_i", "TYPE", "int4", "9999-"),
+                ABAPMonk::Statements::Constant->new("c_str", "TYPE", "string", "'Hello world!'"),
+                ABAPMonk::Statements::Constant->new("c_duplicate", "TYPE", "matnr", "'DUPLICATE'") );
 @result = $parser->parse($text);
 
 ok eq_array(\@result, \@result_exp), "Parsing CONSTANT failed";
@@ -82,16 +82,16 @@ $text .= "DATA: lf_very_long_field TYPE string." . "\n";
 $text .= "DATA: lt_matnr TYPE TABLE OF matnr." . "\n";
 $text .= "FIELD-SYMBOLS: <lf_matnr> LIKE LINE OF lt_matnr." . "\n";
 
-@result_exp = ( SAF::Statements::Data->new("lf_i", "TYPE", "int4"),
-                SAF::Statements::Data->new("lf_test011", "TYPE", "string"),
+@result_exp = ( ABAPMonk::Statements::Data->new("lf_i", "TYPE", "int4"),
+                ABAPMonk::Statements::Data->new("lf_test011", "TYPE", "string"),
 
-                SAF::Statements::FieldSymbol->new("<lf_i>", "TYPE", "int4"),
-                SAF::Statements::FieldSymbol->new("<lf_test011>", "TYPE", "string"),
+                ABAPMonk::Statements::FieldSymbol->new("<lf_i>", "TYPE", "int4"),
+                ABAPMonk::Statements::FieldSymbol->new("<lf_test011>", "TYPE", "string"),
 
-                SAF::Statements::Data->new("lf_very_long_field", "TYPE", "string"),
-                SAF::Statements::Data->new("lt_matnr", "TYPE TABLE OF", "matnr"),
+                ABAPMonk::Statements::Data->new("lf_very_long_field", "TYPE", "string"),
+                ABAPMonk::Statements::Data->new("lt_matnr", "TYPE TABLE OF", "matnr"),
 
-                SAF::Statements::FieldSymbol->new("<lf_matnr>", "LIKE LINE OF", "lt_matnr") );
+                ABAPMonk::Statements::FieldSymbol->new("<lf_matnr>", "LIKE LINE OF", "lt_matnr") );
 @result = $parser->parse($text);
 
 ok eq_array(\@result, \@result_exp), "Parsing DATA + FIELD-SYMBOL failed";
@@ -107,9 +107,9 @@ ENDFORM.';
     my @using = ( );
     my @changing = ( );
     my @tables = ( );
-    my @statements = ( SAF::Statements::Data->new("lf_i", "TYPE", "int4"),
-                       SAF::Statements::Data->new("lf_test011", "TYPE", "string") );
-    @result_exp = ( SAF::Statements::Form->new("test",
+    my @statements = ( ABAPMonk::Statements::Data->new("lf_i", "TYPE", "int4"),
+                       ABAPMonk::Statements::Data->new("lf_test011", "TYPE", "string") );
+    @result_exp = ( ABAPMonk::Statements::Form->new("test",
                                                \@using,
                                                \@changing,
                                                \@tables,
@@ -130,14 +130,14 @@ DATA: lf_test011 TYPE string.
 ENDFORM.';
 
 {
-    my @using = ( SAF::Statements::Argument->new("i_a", "TYPE", "int4"),
-                  SAF::Statements::Argument->new("i_a", "TYPE", "int4"),
-                  SAF::Statements::Argument->new("i_comparator", "TYPE", "string") );
-    my @changing = ( SAF::Statements::Argument->new("e_result", "TYPE", "int4") );
+    my @using = ( ABAPMonk::Statements::Argument->new("i_a", "TYPE", "int4"),
+                  ABAPMonk::Statements::Argument->new("i_a", "TYPE", "int4"),
+                  ABAPMonk::Statements::Argument->new("i_comparator", "TYPE", "string") );
+    my @changing = ( ABAPMonk::Statements::Argument->new("e_result", "TYPE", "int4") );
     my @tables = ( );
-    my @statements = ( SAF::Statements::Data->new("lf_i", "TYPE", "int4"),
-                       SAF::Statements::Data->new("lf_test011", "TYPE", "string") );
-    @result_exp = ( SAF::Statements::Form->new("test",
+    my @statements = ( ABAPMonk::Statements::Data->new("lf_i", "TYPE", "int4"),
+                       ABAPMonk::Statements::Data->new("lf_test011", "TYPE", "string") );
+    @result_exp = ( ABAPMonk::Statements::Form->new("test",
                                                \@using,
                                                \@changing,
                                                \@tables,

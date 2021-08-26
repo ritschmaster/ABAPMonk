@@ -4,8 +4,8 @@ use strict;
 use warnings;
 use utf8;
 
-use SAF::Parser;
-use SAF::Formatter;
+use ABAPMonk::Parser;
+use ABAPMonk::Formatter;
 
 my $text = '';
 if (scalar @ARGV > 0) {
@@ -19,8 +19,8 @@ if (scalar @ARGV > 0) {
     }
 }
 
-my $parser = SAF::Parser->new;
-my $formatter = SAF::Formatter->new;
+my $parser = ABAPMonk::Parser->new;
+my $formatter = ABAPMonk::Formatter->new;
 
 my @statements = $parser->parse($text);
 my $formatted_text = $formatter->format(@statements);
