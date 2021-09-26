@@ -47,7 +47,14 @@ sub new {
 
         <rule: FieldSymbolField>  \<[a-zA-Z0-9_-]+\>
 
-        <rule: TypeDecl>          TYPE | TYPE LINE OF | TYPE TABLE OF | LIKE | LIKE LINE OF | TYPE REF TO
+        <rule: TypeDecl>          TYPE
+                                  | TYPE LINE OF
+                                  | TYPE TABLE OF
+                                  | TYPE RANGE OF
+                                  | LIKE
+                                  | LIKE LINE OF
+                                  | LIKE RANGE OF
+                                  | TYPE REF TO
 
         <rule: Type>              ([/a-zA-Z0-9_-]|=>)+
 

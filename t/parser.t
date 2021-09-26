@@ -36,6 +36,7 @@ $text .= "DATA: lf_i TYPE int4. DATA: lf_test011 TYPE string." . "\n";
 $text .= "* Fields to eliminate duplicates:" . "\n";
 $text .= "DATA: lt_duplicates TYPE TABLE OF matnr." . "\n";
 $text .= "DATA: lt_matnr TYPE /test/tt_matnr." . "\n";
+$text .= "DATA: lrt_werks TYPE RANGE OF werks_d." . "\n";
 $text .= "DATA: lcl_data TYPE REF TO data." . "\n";
 
 @result_exp = ( ABAPMonk::Statements::CommentBlock->new(["This is a test",
@@ -45,6 +46,7 @@ $text .= "DATA: lcl_data TYPE REF TO data." . "\n";
                 ABAPMonk::Statements::CommentBlock->new(["Fields to eliminate duplicates:"]),
                 ABAPMonk::Statements::Data->new("lt_duplicates", "TYPE TABLE OF", "matnr"),
                 ABAPMonk::Statements::Data->new("lt_matnr", "TYPE", "/test/tt_matnr" ),
+                ABAPMonk::Statements::Data->new("lrt_werks", "TYPE RANGE OF", "werks_d" ),
                 ABAPMonk::Statements::Data->new("lcl_data", "TYPE REF TO", "data" ) );
 @result = $parser->parse($text);
 
