@@ -1,3 +1,11 @@
+=encoding utf-8
+
+=head1 NAME
+
+ABAPMonk::Statements::CommentBlock - Parsed ABAP statements of comments
+
+=cut
+
 package ABAPMonk::Statements::CommentBlock;
 
 use strict;

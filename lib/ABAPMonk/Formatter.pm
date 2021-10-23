@@ -1,3 +1,11 @@
+=encoding utf-8
+
+=head1 NAME
+
+ABAPMonk::Formatter - Format ABAPMonk ABAP objects to plain text
+
+=cut
+
 package ABAPMonk::Formatter;
 
 sub new {
@@ -10,11 +18,17 @@ sub new {
     return $self;
 }
 
-# Formats ABAPMonk::Statement::Data and ABAPMonk::Statement::FieldSymbol objects.
-#
-# $i is the index at which a ABAPMonk::Statement::Data or ABAPMonk::Statement::FieldSymbol object was found
-#
-# Returns the formatted string and the new index position.
+=head2 _format_data
+
+Formats ABAPMonk::Statement::Data and ABAPMonk::Statement::FieldSymbol objects.
+
+Signature: _format_data($statements_ref, $i)
+
+The parameter $i is the index at which a ABAPMonk::Statement::Data or ABAPMonk::Statement::FieldSymbol object was found.
+
+Returns the formatted string and the new index position.
+
+=cut
 sub _format_data {
     my ($self, $statements_ref, $i) = @_;
     my @statements = @{$statements_ref};

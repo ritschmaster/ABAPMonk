@@ -1,5 +1,14 @@
+=encoding utf-8
+
+=head1 NAME
+
+format.t - Unittests for ABAPMonk::Formatter
+
+=cut
+
 use strict;
 use warnings;
+use utf8;
 
 use Test::More;
 use Data::Dumper;

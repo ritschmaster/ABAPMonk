@@ -1,3 +1,11 @@
+=encoding utf-8
+
+=head1 NAME
+
+ABAPMonk::Statement - Base class for parsed ABAP statements
+
+=cut
+
 package Statement;
 
 use strict;

@@ -1,3 +1,11 @@
+=encoding utf-8
+
+=head1 NAME
+
+ABAPMonk::Statements::Argument - Parsed ABAP statements of a subroutine argument
+
+=cut
+
 package ABAPMonk::Statements::Argument;
 
 use strict;

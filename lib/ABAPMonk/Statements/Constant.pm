@@ -1,3 +1,11 @@
+=encoding utf-8
+
+=head1 NAME
+
+ABAPMonk::Statements::Constant - Parsed ABAP statement "CONSTANT:"
+
+=cut
+
 package ABAPMonk::Statements::Constant;
 
 use strict;

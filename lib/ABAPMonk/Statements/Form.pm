@@ -1,3 +1,11 @@
+=encoding utf-8
+
+=head1 NAME
+
+ABAPMonk::Statements::Form - Parsed ABAP statements of an entire subroutine
+
+=cut
+
 package ABAPMonk::Statements::Form;
 
 use strict;

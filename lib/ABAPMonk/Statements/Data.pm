@@ -1,3 +1,11 @@
+=encoding utf-8
+
+=head1 NAME
+
+ABAPMonk::Statements::Data - Parsed ABAP statement "DATA:"
+
+=cut
+
 package ABAPMonk::Statements::Data;
 
 use strict;

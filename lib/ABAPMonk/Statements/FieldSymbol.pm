@@ -1,3 +1,11 @@
+=encoding utf-8
+
+=head1 NAME
+
+ABAPMonk::Statements::FieldSymbol - Parsed ABAP statement "FIELD-SYMBOL:"
+
+=cut
+
 package ABAPMonk::Statements::FieldSymbol;
 
 use strict;
