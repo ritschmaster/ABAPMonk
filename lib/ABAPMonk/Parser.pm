@@ -58,56 +58,111 @@ sub new {
 
 
         <rule: Data>              # DATA:
-                                  [dD][aA][tT][aA]: <Field> <TypeDecl> <Type> <StatementEnd>
+                                  <DataWord> <Field> <DataTypeDecl> <Type> <[TypeAddtions]>{0,1} <StatementEnd>
+
+        <rule: DataWord>          [dD][aA][tT][aA]: <[Comment]>{0,1}
 
         <rule: FieldSymbol>       # FIELD-SYMBOLS:
-                                  [fF][iI][eE][lL][dD]-[sS][yY][mM][bB][oO][lL][sS]: <FieldSymbolField> <TypeDecl> <Type> <StatementEnd>
+                                  <FieldSymbolWord> <FieldSymbolField> <FieldSymbolTypeDecl> <Type> <StatementEnd>
+
+        <rule: FieldSymbolWord>   [fF][iI][eE][lL][dD]-[sS][yY][mM][bB][oO][lL][sS]: <[Comment]>{0,1}
 
         <rule: Constant>          # CONSTANTS:
-                                  [cC][oO][nN][sS][tT][aA][nN][tT][sS]: <Field> <TypeDecl> <Type> VALUE <Value> <StatementEnd>
+                                  <ConstantWord> <Field> <DataTypeDecl> <Type> VALUE <Value> <StatementEnd>
+
+        <rule: ConstantWord>      [cC][oO][nN][sS][tT][aA][nN][tT][sS]: <[Comment]>{0,1}
 
         <rule: Field>             [a-zA-Z0-9_-]+
 
         <rule: FieldSymbolField>  \<[a-zA-Z0-9_-]+\>
 
-        <rule: TypeDecl>
+        <rule: DataTypeDecl>
                                   # TYPE
-                                  [tT][yY][pP][eE]
+                                  <TypeWord>
+
                                   # TYPE LINE OF
-                                  | [tT][yY][pP][eE] [lL][iI][nN][eE] [oO][fF]
+                                  | <TypeWord> <LikeWord> <OfWord>
 
                                   # TYPE TABLE OF
-                                  | [tT][yY][pP][eE] [tT][aA][bB][lL][eE] [oO][fF]
+                                  | <TypeWord> <TableWord> <OfWord>
 
                                   # TYPE STANDARD TABLE OF
-                                  | [tT][yY][pP][eE] [sT][aA][nN][dD][aA][rR][dD] [tT][aA][bB][lL][eE] [oO][fF]
+                                  | <TypeWord> <StandardWord> <TableWord> <OfWord>
+
+                                  # TYPE SORTED TABLE OF
+                                  | <TypeWord> <SortedWord> <TableWord> <OfWord>
+
+                                  # TYPE HASHED TABLE OF
+                                  | <TypeWord> <HashedWord> <TableWord> <OfWord>
 
                                   # TYPE RANGE OF
-                                  | [tT][yY][pP][eE] [rR][aA][nN][gG][eE] [oO][fF]
+                                  | <TypeWord> <RangeWord> <OfWord>
 
                                   # TYPE REF TO
-                                  | [tT][yY][pP][eE] [rR][eE][fF] [tT][oO]
+                                  | <TypeWord> <RefWord> <ToWord>
 
-                                  # LIKE
-                                  | [lL][iI][kK][eE]
+        <rule: FieldSymbolTypeDecl>
+                                  # TYPE
+                                  <TypeWord>
 
-                                  # LIKE LINE OF
-                                  | [lL][iI][kK][eE] [lL][iI][nN][eE] [oO][fF]
+                                  # TYPE LINE OF
+                                  | <TypeWord> <LikeWord> <OfWord>
 
-                                  # LIKE TABLE OF
-                                  | [lL][iI][kK][eE] [tT][aA][bB][lL][eE] [oO][fF]
+                                  # TYPE TABLE OF
+                                  | <TypeWord> <TableWord> <OfWord>
 
-                                  # LIKE STANDARD TABLE OF
-                                  | [lL][iI][kK][eE] [sT][aA][nN][dD][aA][rR][dD] [tT][aA][bB][lL][eE] [oO][fF]
+                                  # TYPE STANDARD TABLE OF
+                                  | <TypeWord> <StandardWord> <TableWord> <OfWord>
 
-                                  # LIKE RANGE OF
-                                  | [lL][iI][kK][eE] [rR][aA][nN][gG][eE] [oO][fF]
+                                  # TYPE STANDARD TABLE
+                                  | <TypeWord> <StandardWord> <TableWord>
+
+                                  # TYPE SORTED TABLE OF
+                                  | <TypeWord> <SortedWord> <TableWord> <OfWord>
+
+                                  # TYPE SORTED TABLE
+                                  | <TypeWord> <SortedWord> <TableWord>
+
+                                  # TYPE HASHED TABLE OF
+                                  | <TypeWord> <HashedWord> <TableWord> <OfWord>
+
+                                  # TYPE HASHED TABLE
+                                  | <TypeWord> <HashedWord> <TableWord>
+
+                                  # TYPE RANGE OF
+                                  | <TypeWord> <RangeWord> <OfWord>
+
+                                  # TYPE REF TO
+                                  | <TypeWord> <RefWord> <ToWord>
+
+        <rule: TypeWord>          [tT][yY][pP][eE] # <[Comment]>{0,1}
+                                  | [lL][iI][kK][eE] # <[Comment]>{0,1}
+
+        <rule: LikeWord>          [lL][iI][nN][eE] <[Comment]>{0,1}
+
+        <rule: OfWord>            [oO][fF] # <[Comment]>{0,1}
+
+        <rule: StandardWord>      [sS][tT][aA][nN][dD][aA][rR][dD] <[Comment]>{0,1}
+
+        <rule: SortedWord>        [sS][oO][rR][tT][eE][dD] <[Comment]>{0,1}
+
+        <rule: HashedWord>        [hH][aA][sS][eE][dD] <[Comment]>{0,1}
+
+        <rule: TableWord>         [tT][aA][bB][lL][eE] <[Comment]>{0,1}
+
+        <rule: RangeWord>         [rR][aA][nN][gG][eE] <[Comment]>{0,1}
+
+        <rule: RefWord>           [rR][eE][fF] <[Comment]>{0,1}
+
+        <rule: ToWord>            [tT][oO] # <[Comment]>{0,1}
 
         <rule: Type>              ([/a-zA-Z0-9_-]|=>)+
 
+        <rule: TypeAddtions>      WITH UNIQUE KEY
+
         <rule: Value>             '.*' | [0-9]+[-]{0,1}
 
-        <rule: StatementEnd>      \.
+        <rule: StatementEnd>      \. <[Comment]>{0,1}
 
         <rule: Form>             # FORM
                                  [fF][oO][rR][mM] <FormName> <StatementEnd>
@@ -135,19 +190,29 @@ sub new {
         <rule: Changing>         # CHANGING
                                  [cC][hH][aA][nN][gG][iI][nN][gG] <[Argument]>+
 
-        <rule: Argument>         <Field> <TypeDecl> <Type>
+        <rule: Argument>         <Field> <DataTypeDecl> <Type>
 
         <rule: If>               # IF
-                                 [iI][fF] <[Condition]> <StatementEnd>
+                                 <IfWord> <[Condition]> <StatementEnd>
                                    <[Statement]>*
                                  <[ElseIf]>*
                                  # ENDIF
-                                 [eE][nN][dD][iI][fF] <StatementEnd>
+                                 <EndifWord> <StatementEnd>
 
-        <rule: Condition>        <Field> = <Field>
+        <rule: IfWord>           [iI][fF] <[Comment]>{0,1}
+
+        <rule: EndifWord>        [eE][nN][dD][iI][fF] <[Comment]>{0,1}
+
+        <rule: Condition>        <Field> <BinaryOperator> <Field>
+
+        <rule: BinaryOperator>   <EqualSignWord>
+
+        <rule: EqualSignWord>    = <[Comment]>{0,1}
 
         <rule: ElseIf>           # ELSEIF
-                                 [eE][lL][sS][eE][iI][fF] <[Condition]>+ <StatementEnd>
+                                 <ElseifWord> <[Condition]>+ <StatementEnd>
+
+        <rule: ElseifWord>       [eE][lL][sS][eE][iI][fF] <[Comment]>{0,1}
         };
 
 
@@ -165,6 +230,7 @@ Signature: _parse_data_declration($data_declaration)
 The parameter $data_declaration is a deep hash.
 
 =cut
+
 sub _parse_data_declaration {
         my ($self, $data_declaration) = @_;
 
@@ -174,15 +240,15 @@ sub _parse_data_declaration {
         my $constant = ${ $data_declaration }{ Constant };
         if ($data) {
                 $parsed_statement = ABAPMonk::Statements::Data->new(${ $data }{ Field },
-                                                               ${ $data }{ TypeDecl },
-                                                               ${ $data }{ Type });
+                                                                     ${ $data }{ DataTypeDecl }{ '' },
+                                                                    ${ $data }{ Type });
         } elsif ($field_symbol) {
                 $parsed_statement = ABAPMonk::Statements::FieldSymbol->new(${ $field_symbol }{ FieldSymbolField },
-                                                                      ${ $field_symbol }{ TypeDecl },
+                                                                      ${ $field_symbol }{ FieldSymbolTypeDecl }{ '' },
                                                                       ${ $field_symbol }{ Type });
         } elsif ($constant) {
                 $parsed_statement = ABAPMonk::Statements::Constant->new(${ $constant }{ Field },
-                                                                   ${ $constant }{ TypeDecl },
+                                                                   ${ $constant }{ DataTypeDecl }{ '' },
                                                                    ${ $constant }{ Type },
                                                                    ${ $constant }{ Value });
         } else {

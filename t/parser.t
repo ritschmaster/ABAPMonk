@@ -64,9 +64,11 @@ ok eq_array(\@result, \@result_exp), "Parsing DATA failed";
 ################################################################################
 # Test FIELD-SYMBOL
 $text = "FIELD-SYMBOLS: <lf_i> TYPE int4. FIELD-SYMBOLS: <lf_test011> TYPE string." . "\n";
+$text .= "FIELD-SYMBOLS: <lt_number> TYPE STANDARD TABLE OF numc4." . "\n";
 
 @result_exp = ( ABAPMonk::Statements::FieldSymbol->new("<lf_i>", "TYPE", "int4"),
-                ABAPMonk::Statements::FieldSymbol->new("<lf_test011>", "TYPE", "string") );
+                ABAPMonk::Statements::FieldSymbol->new("<lf_test011>", "TYPE", "string"),
+                ABAPMonk::Statements::FieldSymbol->new("<lt_number>", "TYPE STANDARD TABLE OF", "numc4") );
 @result = $parser->parse($text);
 
 ok eq_array(\@result, \@result_exp), "Parsing FIELD-SYMBOL failed";
@@ -99,6 +101,7 @@ $text .= "FIELD-SYMBOLS: <lf_matnr> LIKE LINE OF lt_matnr." . "\n";
 
 @result_exp = ( ABAPMonk::Statements::Constant->new("c_i", "TYPE", "int4", "9999-"),
                 ABAPMonk::Statements::Constant->new("c_str", "TYPE", "string", "'Hello world!'"),
+
                 ABAPMonk::Statements::Data->new("lf_i", "TYPE", "int4"),
                 ABAPMonk::Statements::Data->new("lf_test011", "TYPE", "string"),
 
