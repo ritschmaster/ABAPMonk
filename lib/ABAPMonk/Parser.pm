@@ -68,9 +68,11 @@ sub new {
         <rule: FieldSymbolWord>   [fF][iI][eE][lL][dD]-[sS][yY][mM][bB][oO][lL][sS]: <[Comment]>{0,1}
 
         <rule: Constant>          # CONSTANTS:
-                                  <ConstantWord> <Field> <DataTypeDecl> <Type> VALUE <Value> <StatementEnd>
+                                  <ConstantWord> <Field> <DataTypeDecl> <Type> <ValueWord> <Value> <StatementEnd>
 
         <rule: ConstantWord>      [cC][oO][nN][sS][tT][aA][nN][tT][sS]: <[Comment]>{0,1}
+
+        <rule: ValueWord>         [vV][aA][lL][uU][eE] <[Comment]>{0,1}
 
         <rule: Field>             [a-zA-Z0-9_-]+
 
@@ -133,7 +135,7 @@ sub new {
                                   | <TypeWord> <RangeWord> <OfWord>
 
                                   # TYPE REF TO
-                                  | <TypeWord> <RefWord> <ToWord>
+                                  | <TypeWord> <RefWord> <ToWord> <OfWord>>
 
         <rule: TypeWord>          [tT][yY][pP][eE] # <[Comment]>{0,1}
                                   | [lL][iI][kK][eE] # <[Comment]>{0,1}
@@ -158,42 +160,56 @@ sub new {
 
         <rule: Type>              ([/a-zA-Z0-9_-]|=>)+
 
-        <rule: TypeAddtions>      WITH UNIQUE KEY
+        <rule: TypeAddtions>      <WithWord> <UniqueWord> <KeyWord>
+
+        <rule: WithWord>          [wW][iI][tT][hH] <[Comment]>{0,1}
+
+        <rule: UniqueWord>        [uU][nN][iI][qQ][uU][eE] <[Comment]>{0,1}
+
+        <rule: KeyWord>           [kK][eE][yY] <[Comment]>{0,1}
 
         <rule: Value>             '.*' | [0-9]+[-]{0,1}
 
         <rule: StatementEnd>      \. <[Comment]>{0,1}
 
         <rule: Form>             # FORM
-                                 [fF][oO][rR][mM] <FormName> <StatementEnd>
+                                 <FormWord> <FormName> <StatementEnd>
                                    <[Statement]>*
                                  # ENDFORM
-                                 [eE][nN][dD][fF][oO][rR][mM] <StatementEnd>
+                                 <EndformWord> <StatementEnd>
 
                                  # FORM
-                                 | [fF][oO][rR][mM] <FormName> <Using> <StatementEnd>
+                                 | <FormWord> <FormName> <Using> <StatementEnd>
                                      <[Statement]>*
                                  # ENDFORM
-                                 [eE][nN][dD][fF][oO][rR][mM] <StatementEnd>
+                                 <EndformWord> <StatementEnd>
 
                                  # FORM
-                                 | [fF][oO][rR][mM] <FormName> <Using> <Changing> <StatementEnd>
+                                 | <FormWord> <FormName> <Using> <Changing> <StatementEnd>
                                      <[Statement]>*
                                  # ENDFORM
-                                 [eE][nN][dD][fF][oO][rR][mM] <StatementEnd>
+                                 <EndformWord> <StatementEnd>
+
+        <rule: FormWord>         [fF][oO][rR][mM] <[Comment]>{0,1}
+
+        <rule: EndformWord>      [eE][nN][dD][fF][oO][rR][mM] <[Comment]>{0,1}
 
         <rule: FormName>         [a-zA-Z0-9_-]+
 
         <rule: Using>            # USING
-                                 [uU][sS][iI][nN][gG] <[Argument]>+
+                                 <UsingWord> <[Argument]>+
+
+        <rule: UsingWord>        [uU][sS][iI][nN][gG] <[Comment]>{0,1}
 
         <rule: Changing>         # CHANGING
-                                 [cC][hH][aA][nN][gG][iI][nN][gG] <[Argument]>+
+                                 <ChangingWord> <[Argument]>+
+
+        <rule: ChangingWord>     [cC][hH][aA][nN][gG][iI][nN][gG] <[Comment]>{0,1}
 
         <rule: Argument>         <Field> <DataTypeDecl> <Type>
 
         <rule: If>               # IF
-                                 <IfWord> <[Condition]> <StatementEnd>
+                                 <IfWord> <Condition> <StatementEnd>
                                    <[Statement]>*
                                  <[ElseIf]>*
                                  # ENDIF
@@ -205,14 +221,37 @@ sub new {
 
         <rule: Condition>        <Field> <BinaryOperator> <Field>
 
-        <rule: BinaryOperator>   <EqualSignWord>
+        <rule: BinaryOperator>   <EqualWord>
+                                 | <UnequalWord>
+                                 | <GreaterThanWord>
+                                 | <GreaterEqualWord>
+                                 | <LowerThanWord>
+                                 | <LowerEqualWord>
 
-        <rule: EqualSignWord>    = <[Comment]>{0,1}
+        <rule: EqualWord>        = <[Comment]>{0,1}
+
+        <rule: UnequalWord>      \<\> <[Comment]>{0,1}
+
+        <rule: GreaterThanWord>  \> <[Comment]>{0,1}
+
+        <rule: GreaterEqualWord> \>= <[Comment]>{0,1}
+
+        <rule: LowerThanWord>    \< <[Comment]>{0,1}
+
+        <rule: LowerEqualWord>   \<= <[Comment]>{0,1}
 
         <rule: ElseIf>           # ELSEIF
                                  <ElseifWord> <[Condition]>+ <StatementEnd>
 
         <rule: ElseifWord>       [eE][lL][sS][eE][iI][fF] <[Comment]>{0,1}
+
+        <rule: While>            <WhileWord> <Condition> <StatementEnd>
+                                   <[Statement]>*
+                                 <EndWhileWord>
+
+        <rule: WhileWord>        [wW][hH][iI][lL][eE]
+
+        <rule: EndWhileWord>     [eE][nN][dD][wW][hH][iI][lL][eE]
         };
 
 
