@@ -50,16 +50,31 @@ $text .= "DATA: lcl_data TYPE REF TO data." . "\n";
 
 @result_exp = ( ABAPMonk::Statements::CommentBlock->new(["This is a test",
                                                     "testing some data declarations"]),
-                ABAPMonk::Statements::Data->new("lf_i", "TYPE", "int4"),
-                ABAPMonk::Statements::Data->new("lf_test011", "TYPE", "string"),
-                ABAPMonk::Statements::CommentBlock->new(["Fields to eliminate duplicates:"]),
-                ABAPMonk::Statements::Data->new("lt_duplicates", "TYPE TABLE OF", "matnr"),
-                ABAPMonk::Statements::Data->new("lt_matnr", "TYPE", "/test/tt_matnr" ),
-                ABAPMonk::Statements::Data->new("lrt_werks", "TYPE RANGE OF", "werks_d" ),
-                ABAPMonk::Statements::Data->new("lcl_data", "TYPE REF TO", "data" ) );
+                ABAPMonk::Statements::Data->new("lf_i", "TYPE", "int4", ""),
+                ABAPMonk::Statements::Data->new("lf_test011", "TYPE", "string", ""),
+                ABAPMonk::Statements::CommentBlock->new(["Fields to eliminate duplicates:"], ""),
+                ABAPMonk::Statements::Data->new("lt_duplicates", "TYPE TABLE OF", "matnr", ""),
+                ABAPMonk::Statements::Data->new("lt_matnr", "TYPE", "/test/tt_matnr", "" ),
+                ABAPMonk::Statements::Data->new("lrt_werks", "TYPE RANGE OF", "werks_d", "" ),
+                ABAPMonk::Statements::Data->new("lcl_data", "TYPE REF TO", "data", "" ) );
+
 @result = $parser->parse($text);
 
 ok eq_array(\@result, \@result_exp), "Parsing DATA failed";
+
+################################################################################
+# Test DATA with custom table type
+$text = "* This is a test" . "\n";
+$text .= "* testing a custom table type definition" . "\n";
+$text .= "DATA: lt_mara TYPE SORTED TABLE OF mara WITH UNIQUE KEY matnr." . "\n";
+
+@result_exp = ( ABAPMonk::Statements::CommentBlock->new(["This is a test",
+                                                    "testing a custom table type definition"]),
+                ABAPMonk::Statements::Data->new("lt_mara", "TYPE SORTED TABLE OF", "mara", "WITH UNIQUE KEY matnr") );
+
+@result = $parser->parse($text);
+
+ok eq_array(\@result, \@result_exp), "Parsing DATA with custom table type failed";
 
 ################################################################################
 # Test FIELD-SYMBOL
@@ -102,14 +117,14 @@ $text .= "FIELD-SYMBOLS: <lf_matnr> LIKE LINE OF lt_matnr." . "\n";
 @result_exp = ( ABAPMonk::Statements::Constant->new("c_i", "TYPE", "int4", "9999-"),
                 ABAPMonk::Statements::Constant->new("c_str", "TYPE", "string", "'Hello world!'"),
 
-                ABAPMonk::Statements::Data->new("lf_i", "TYPE", "int4"),
-                ABAPMonk::Statements::Data->new("lf_test011", "TYPE", "string"),
+                ABAPMonk::Statements::Data->new("lf_i", "TYPE", "int4", ""),
+                ABAPMonk::Statements::Data->new("lf_test011", "TYPE", "string", ""),
 
                 ABAPMonk::Statements::FieldSymbol->new("<lf_i>", "TYPE", "int4"),
                 ABAPMonk::Statements::FieldSymbol->new("<lf_test011>", "TYPE", "string"),
 
-                ABAPMonk::Statements::Data->new("lf_very_long_field", "TYPE", "string"),
-                ABAPMonk::Statements::Data->new("lt_matnr", "TYPE TABLE OF", "matnr"),
+                ABAPMonk::Statements::Data->new("lf_very_long_field", "TYPE", "string", ""),
+                ABAPMonk::Statements::Data->new("lt_matnr", "TYPE TABLE OF", "matnr", ""),
 
                 ABAPMonk::Statements::FieldSymbol->new("<lf_matnr>", "LIKE LINE OF", "lt_matnr") );
 @result = $parser->parse($text);
@@ -127,8 +142,8 @@ ENDFORM.';
     my @using = ( );
     my @changing = ( );
     my @tables = ( );
-    my @statements = ( ABAPMonk::Statements::Data->new("lf_i", "TYPE", "int4"),
-                       ABAPMonk::Statements::Data->new("lf_test011", "TYPE", "string") );
+    my @statements = ( ABAPMonk::Statements::Data->new("lf_i", "TYPE", "int4", ""),
+                       ABAPMonk::Statements::Data->new("lf_test011", "TYPE", "string", "") );
     @result_exp = ( ABAPMonk::Statements::Form->new("test",
                                                \@using,
                                                \@changing,
@@ -155,8 +170,8 @@ ENDFORM.';
                   ABAPMonk::Statements::Argument->new("i_comparator", "TYPE", "string") );
     my @changing = ( ABAPMonk::Statements::Argument->new("e_result", "TYPE", "int4") );
     my @tables = ( );
-    my @statements = ( ABAPMonk::Statements::Data->new("lf_i", "TYPE", "int4"),
-                       ABAPMonk::Statements::Data->new("lf_test011", "TYPE", "string") );
+    my @statements = ( ABAPMonk::Statements::Data->new("lf_i", "TYPE", "int4", ""),
+                       ABAPMonk::Statements::Data->new("lf_test011", "TYPE", "string", "") );
     @result_exp = ( ABAPMonk::Statements::Form->new("test",
                                                \@using,
                                                \@changing,

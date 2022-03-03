@@ -20,7 +20,7 @@ use ABAPMonk::Statements::CommentBlock;
 use ABAPMonk::Statements::Form;
 use ABAPMonk::Statements::Argument;
 
-=head1 APPEDIX
+=head1 APPENDIX
 
 =head2 new
 
@@ -58,7 +58,7 @@ sub new {
 
 
         <rule: Data>              # DATA:
-                                  <DataWord> <Field> <DataTypeDecl> <Type> <[TypeAddtions]>{0,1} <StatementEnd>
+                                  <DataWord> <Field> <DataTypeDecl> <Type> <[TableTypeAddition]>{0,1} <StatementEnd>
 
         <rule: DataWord>          [dD][aA][tT][aA]: <[Comment]>{0,1}
 
@@ -160,7 +160,9 @@ sub new {
 
         <rule: Type>              ([/a-zA-Z0-9_-]|=>)+
 
-        <rule: TypeAddtions>      <WithWord> <UniqueWord> <KeyWord>
+        <rule: Attribute>         ([/a-zA-Z0-9_])+
+
+        <rule: TableTypeAddition> <WithWord> <UniqueWord> <KeyWord> <[Attribute]>+
 
         <rule: WithWord>          [wW][iI][tT][hH] <[Comment]>{0,1}
 
@@ -269,7 +271,6 @@ Signature: _parse_data_declration($data_declaration)
 The parameter $data_declaration is a deep hash.
 
 =cut
-
 sub _parse_data_declaration {
         my ($self, $data_declaration) = @_;
 
@@ -278,9 +279,23 @@ sub _parse_data_declaration {
         my $field_symbol = ${ $data_declaration }{ FieldSymbol };
         my $constant = ${ $data_declaration }{ Constant };
         if ($data) {
-                $parsed_statement = ABAPMonk::Statements::Data->new(${ $data }{ Field },
-                                                                     ${ $data }{ DataTypeDecl }{ '' },
-                                                                    ${ $data }{ Type });
+          my @table_type_addition_arr = ${ $data }{ TableTypeAddition };
+          my $table_type_addition = '';
+          if (scalar @table_type_addition_arr > 0) {
+            $table_type_addition = $table_type_addition_arr[0];
+            if ($table_type_addition) {
+              @table_type_addition_arr = $table_type_addition;
+              @table_type_addition_arr = $table_type_addition_arr[0][0];
+              $table_type_addition = ${ $table_type_addition_arr[0] }{ '' };
+            } else {
+              $table_type_addition = '';
+            }
+          }
+
+               $parsed_statement = ABAPMonk::Statements::Data->new(${ $data }{ Field },
+                                                                   ${ $data }{ DataTypeDecl }{ '' },
+                                                                   ${ $data }{ Type },
+                                                                   $table_type_addition);
         } elsif ($field_symbol) {
                 $parsed_statement = ABAPMonk::Statements::FieldSymbol->new(${ $field_symbol }{ FieldSymbolField },
                                                                       ${ $field_symbol }{ FieldSymbolTypeDecl }{ '' },
@@ -308,6 +323,15 @@ sub _parse_data_declarations {
         return @parsed_statements;
 }
 
+=head2 _parse_comment_block
+
+Parses a comment block anywhere.
+
+Signature: _parse_comment_block($comment_block_ref)
+
+The parameter $comment_block_ref is an array of deep hashes.
+
+=cut
 sub _parse_comment_block {
     my ($self, $comment_block_ref) = @_;
 
@@ -325,6 +349,15 @@ sub _parse_comment_block {
     return ABAPMonk::Statements::CommentBlock->new(\@text_lines);
 }
 
+=head2 _parse_argument
+
+Parses a single argument of a subroutine.
+
+Signature: _parse_argument($argument)
+
+The parameter $argument is a deep hash.
+
+=cut
 sub _parse_argument {
         my ($self, $argument) = @_;
 
@@ -340,6 +373,15 @@ sub _parse_argument {
         return $parsed_statement;
 }
 
+=head2 _parse_arguments
+
+Parses all arguments of a subroutine.
+
+Signature: _parse_arguments($arguments_ref)
+
+The parameter $arguments_ref is a reference to an array of deep hashes.
+
+=cut
 sub _parse_arguments {
         my ($self, $arguments_ref) = @_;
 

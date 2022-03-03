@@ -16,13 +16,14 @@ use ABAPMonk::Statement;
 our @ISA = qw(Statement);
 
 sub new {
-    my ($class, $field, $type_decl, $type) = @_;
+    my ($class, $field, $type_decl, $type, $table_type_addition) = @_;
 
     my $self = $class->SUPER::new;
 
     $self->{ _field } = $field;
     $self->{ _type_decl } = $type_decl;
     $self->{ _type } = $type;
+    $self->{ _table_type_addition } = $table_type_addition;
 
     bless $self, $class;
 
@@ -49,7 +50,8 @@ sub _simple_format {
 
     my $formatted = "DATA: " . $self->{ _field }
                     . " "
-                    . $self->{ _type_decl } . " " . $self->{ _type } . $self->STATEMENT_END_STR;
+                    . $self->{ _type_decl } . " " . $self->{ _type } . $self->{ _table_type_addition }
+                    . $self->STATEMENT_END_STR;
 
     return $formatted;
 }
