@@ -13,7 +13,7 @@ use utf8;
 use Test::More;
 use Data::Dumper;
 
-plan tests => 7;
+plan tests => 8;
 
 use ABAPMonk::Parser;
 use ABAPMonk::Statements::Data;
